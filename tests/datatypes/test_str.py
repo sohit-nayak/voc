@@ -627,6 +627,34 @@ class StrTests(TranspileTestCase):
             print("HeLlo_worldʃ!".casefold())
             """)
 
+    def test_maketrans(self):
+        self.assertCodeExecution("""
+            str = "abcd"
+            print(str.maketrans("abc", "ghj"))
+            print(str.maketrans({'a': 'b', 'c': 'd', 'b': 'nm'}))
+            print(str.maketrans({50: 'b', 'c': 'df'}))
+            try:
+                print(str.maketrans("abcd", "kluhj"))
+            except ValueError as err:
+                print(err)
+            try:
+                print(str.maketrans("abcd", 8))
+            except TypeError as err:
+                print(err)
+            try:
+                print(str.maketrans(9))
+            except TypeError as err:
+                print(err)
+            try:
+                print(str.maketrans({'lo': 'l'}))
+            except ValueError as err:
+                print(err)
+            try:
+                print(str.maketrans({3.4: 'l'}))
+            except TypeError as err:
+                print(err)
+            """)
+
 
 class UnaryStrOperationTests(UnaryOperationTestCase, TranspileTestCase):
     data_type = 'str'

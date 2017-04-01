@@ -1032,7 +1032,7 @@ public class Str extends org.python.types.Object {
     }
 
     @org.python.Method(
-             __doc__ = "Return a translation table usable for str.translate().\n" +
+            __doc__ = "Return a translation table usable for str.translate().\n" +
                     "\n" +
                     "If there is only one argument, it must be a dictionary mapping Unicode\n" +
                     "ordinals (integers) or characters to Unicode ordinals, strings or None.\n" +
@@ -1040,10 +1040,48 @@ public class Str extends org.python.types.Object {
                     "If there are two arguments, they must be strings of equal length, and\n" +
                     "in the resulting dictionary, each character in x will be mapped to the\n" +
                     "character at the same position in y. If there is a third argument, it\n" +
-                    "must be a string, whose characters will be mapped to None in the result.\n"
+                    "must be a string, whose characters will be mapped to None in the result.\n",
+            args = {"intab"},
+            default_args = {"outtab"}
     )
-    public org.python.Object maketrans() {
-        throw new org.python.exceptions.NotImplementedError("maketrans() has not been implemented.");
+    public org.python.Object maketrans(org.python.Object intab, org.python.Object outtab) {
+        if (outtab == null) {
+            if (!(intab instanceof org.python.types.Dict)) {
+                return new org.python.exceptions.TypeError("if you give only one argument to maketrans it must be a dict");
+            } else {
+                java.util.Map<org.python.Object, org.python.Object> map = ((org.python.types.Dict) intab).value;
+                java.util.LinkedHashMap<org.python.Object, org.python.Object> map_return = new java.util.LinkedHashMap<org.python.Object, org.python.Object>();
+                java.util.List<org.python.Object> keys = new java.util.ArrayList<org.python.Object>(map.keySet());
+                for (java.util.Map.Entry<org.python.Object, org.python.Object> m : map.entrySet()) {
+                    if (m.getKey() instanceof org.python.types.Int) {
+                        map_return.put(m.getKey(), m.getValue());
+                    } else if (m.getKey() instanceof org.python.types.Str) {
+                        if (((org.python.types.Str) m.getKey()).value.length() != 1) {
+                            return new org.python.exceptions.ValueError("string keys in translate table must be of length 1");
+                        }
+                        java.lang.String ch = new java.lang.String(((org.python.types.Str) m.getKey()).value);
+                        int chno = (int) ch.charAt(0);
+                        map_return.put(new org.python.types.Int(chno), m.getValue());
+                    } else {
+                        return new org.python.exceptions.TypeError("keys in translate table must be strings or integers");
+                    }
+                }
+                return new org.python.types.Dict(map_return);
+            }
+        }
+        if (intab instanceof org.python.types.Str && outtab instanceof org.python.types.Str) {
+            java.lang.String str1 = new java.lang.String(((org.python.types.Str) intab).value);
+            java.lang.String str2 = new java.lang.String(((org.python.types.Str) outtab).value);
+            java.util.Map<org.python.Object, org.python.Object> map = new java.util.HashMap<org.python.Object, org.python.Object>();
+            if (str1.length() == str2.length()) {
+                for (int i = 0; i < str1.length(); i++) {
+                    map.put(new org.python.types.Int((int) str1.charAt(i)), new org.python.types.Int((int) str2.charAt(i)));
+                }
+                return new org.python.types.Dict(map);
+            }
+            throw new org.python.exceptions.ValueError("the first two maketrans arguments must have equal length");
+        }
+        throw new org.python.exceptions.TypeError("must be str, not " + org.Python.typeName(outtab.getClass()));
     }
 
     @org.python.Method(
