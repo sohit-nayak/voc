@@ -651,6 +651,41 @@ class StrTests(TranspileTestCase):
                 print(err)
             try:
                 print(str.maketrans({3.4: 'l'}))
+                """)
+        
+    def test_rpartition(self):
+        self.assertCodeExecution("""
+            st = "Hello World!"
+            print(st.rpartition("H"))
+            print(st.rpartition(" "))
+            print(st.rpartition("l"))
+            print(st.rpartition("q"))
+            print(st.rpartition("lo"))
+            print(st.rpartition("!"))
+            print(st.rpartition("ld!"))
+            print("voc".rpartition("foobar"))
+            print("".rpartition("oi"))
+            class str2:
+                def __str__(self):
+                    return "abc"
+            try:
+                print(st.rpartition(str2()))
+            except TypeError as err:
+                print(err)
+            try:
+                print(st.rpartition(""))
+            except ValueError as err:
+                print(err)
+            try:
+                print(st.rpartition(4))
+            except TypeError as err:
+                print(err)
+            try:
+                print(st.rpartition(7.8))
+            except TypeError as err:
+                print(err)
+            try:
+                print(st.rpartition())
             except TypeError as err:
                 print(err)
             """)
