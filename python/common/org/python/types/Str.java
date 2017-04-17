@@ -1456,10 +1456,43 @@ public class Str extends org.python.types.Object {
                     "lookup/indexing via __getitem__, for instance a dictionary or list,\n" +
                     "mapping Unicode ordinals to Unicode ordinals, strings, or None. If\n" +
                     "this operation raises LookupError, the character is left untouched.\n" +
-                    "Characters mapped to None are deleted.\n"
+                    "Characters mapped to None are deleted.\n",
+            default_args = {"table"}
     )
-    public org.python.Object translate() {
-        throw new org.python.exceptions.NotImplementedError("translate() has not been implemented.");
+    public org.python.Object translate(org.python.Object trans_table) {
+        if (trans_table instanceof org.python.types.Dict) {
+            java.util.Map<org.python.Object, org.python.Object> table = new java.util.LinkedHashMap<org.python.Object, org.python.Object>();
+            table = ((org.python.types.Dict) trans_table).value; 
+            java.util.List<Integer> keys = new java.util.ArrayList<Integer>();
+            java.util.List<org.python.Object> keys_objs = new java.util.ArrayList<org.python.Object>(table.keySet());
+            java.lang.StringBuffer buff = new java.lang.StringBuffer();
+            for (int i = 0; i < table.size(); i ++) {
+                keys.add((int) (((org.python.types.Int) keys_objs.get(i)).value));
+            }
+            for (int i = 0; i< this.value.length(); i++) {
+
+                int d = this.value.charAt(i);
+                if (keys.contains(d)) {
+                    int pos = keys.indexOf(d);
+                    org.python.Object obj = table.get(keys_objs.get(pos));
+                    if (obj instanceof org.python.types.Int) {
+                        int conv = (int) ((org.python.types.Int) obj).value;
+                        buff.append(Character.toString((char) conv));
+                    } else if (obj instanceof org.python.types.Str) {
+                        buff.append(((org.python.types.Str) obj).toString());
+                    } else if (obj instanceof org.python.types.NoneType){
+                        continue;
+                    }
+                } else {
+                    buff.append(Character.toString((char) d));
+                }
+            }
+            return new org.python.types.Str(buff.toString());
+        } else if (trans_table instanceof org.python.types.Tuple) {
+            return new org.python.types.Str(this.value);
+        }
+        return new org.python.exceptions.TypeError("'" + org.Python.typeName(trans_table.getClass()) + "' object is not subscriptable");
+        
     }
 
     @org.python.Method(

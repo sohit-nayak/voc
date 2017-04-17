@@ -652,7 +652,23 @@ class StrTests(TranspileTestCase):
             try:
                 print(str.maketrans({3.4: 'l'}))
                 """)
-        
+    def test_translate(self):
+        self.assertCodeExecution("""
+            str = "its a beautiful world"
+            intab = "aeiou"
+            outtab = "12345"
+            transtab = str.maketrans(intab, outtab)
+            print(str.translate(transtab))
+            transtab = str.maketrans({'a': '1', 'e': '2', 'i': "rty"})
+            print(str.translate(transtab))
+            print("ábracadabro".translate(str.maketrans("áco", "123")))
+            print(str.translate((97, 98)))
+            try:
+                print(str.translate(4))
+            except TypeError as err:
+                print(err)
+            """)
+
     def test_rpartition(self):
         self.assertCodeExecution("""
             st = "Hello World!"
