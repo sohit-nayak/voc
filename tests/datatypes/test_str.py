@@ -652,6 +652,7 @@ class StrTests(TranspileTestCase):
             try:
                 print(str.maketrans({3.4: 'l'}))
                 """)
+
     def test_translate(self):
         self.assertCodeExecution("""
             str = "its a beautiful world"
@@ -662,7 +663,7 @@ class StrTests(TranspileTestCase):
             transtab = str.maketrans({'a': '1', 'e': '2', 'i': "rty"})
             print(str.translate(transtab))
             print("ábracadabro".translate(str.maketrans("áco", "123")))
-            print(str.translate((97, 98)))
+            print(str.translate((97, 98to the man with )))
             try:
                 print(str.translate(4))
             except TypeError as err:
