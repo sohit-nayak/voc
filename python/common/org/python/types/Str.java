@@ -1491,7 +1491,7 @@ public class Str extends org.python.types.Object {
         } else if (trans_table instanceof org.python.types.Tuple) {
             return new org.python.types.Str(this.value);
         }
-        return new org.python.exceptions.TypeError("'" + org.Python.typeName(trans_table.getClass()) + "' object is not subscriptable");    
+        return new org.python.exceptions.TypeError("'" + org.Python.typeName(trans_table.getClass()) + "' object is not subscriptable");
     }
 
     @org.python.Method(
